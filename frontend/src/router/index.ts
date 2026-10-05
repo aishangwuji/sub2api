@@ -439,6 +439,18 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/admin/agent-tokens',
+    name: 'AdminAgentTokens',
+    component: () => import('@/views/admin/AgentTokensView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Agent Tokens',
+      titleKey: 'admin.agentTokens.title',
+      descriptionKey: 'admin.agentTokens.description'
+    }
+  },
+  {
     path: '/admin/users',
     name: 'AdminUsers',
     component: () => import('@/views/admin/UsersView.vue'),

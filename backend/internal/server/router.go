@@ -131,5 +131,12 @@ func registerRoutes(
 	routes.RegisterGatewayRoutes(r, h, apiKeyAuth, apiKeyService, subscriptionService, opsService, settingService, compositeResolver, cfg)
 	routes.RegisterPaymentRoutes(v1, h.Payment, h.PaymentWebhook, h.Admin.Payment, jwtAuth, adminAuth, auditLog, settingService, panelRateLimiter, redisClient)
 
+	// 面向 AI Agent 的标准化运维接口
+	if h.Manage != nil && h.AgentAuth != nil {
+		if agentAuthFn, ok := h.AgentAuth.(middleware2.AgentAuthMiddleware); ok {
+			routes.RegisterManageRoutes(r, h.Manage, agentAuthFn)
+		}
+	}
+
 	handler.RegisterPageRoutes(v1, cfg.Pricing.DataDir, gin.HandlerFunc(jwtAuth), gin.HandlerFunc(adminAuth), settingService)
 }

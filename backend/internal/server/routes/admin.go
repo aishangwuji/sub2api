@@ -3,6 +3,7 @@ package routes
 
 import (
 	"github.com/Wei-Shaw/sub2api/internal/handler"
+	"github.com/Wei-Shaw/sub2api/internal/handler/admin"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
 	"github.com/Wei-Shaw/sub2api/internal/server/middleware"
 	"github.com/Wei-Shaw/sub2api/internal/service"
@@ -130,6 +131,21 @@ func RegisterAdminRoutes(
 
 		// 操作审计日志
 		registerAuditLogRoutes(admin, h, stepUpAuth)
+
+		// Agent Token 管理
+		if h.Admin != nil && h.Admin.AgentToken != nil {
+			registerAgentTokenRoutes(admin, h.Admin.AgentToken)
+		}
+	}
+}
+
+func registerAgentTokenRoutes(admin *gin.RouterGroup, h *admin.AgentTokenHandler) {
+	tokens := admin.Group("/agent-tokens")
+	{
+		tokens.GET("", h.List)
+		tokens.POST("", h.Create)
+		tokens.POST("/:id/revoke", h.Revoke)
+		tokens.GET("/scopes", h.GetScopes)
 	}
 }
 

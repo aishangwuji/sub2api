@@ -107,3 +107,11 @@ func (h *AgentTokenHandler) GetScopes(c *gin.Context) {
 	}
 	response.Success(c, scopes)
 }
+
+// GetSkillDoc 获取 Agent Skill 规约内容（仅限管理员查阅与复制）
+// GET /api/v1/admin/agent-tokens/skill-doc
+func (h *AgentTokenHandler) GetSkillDoc(c *gin.Context) {
+	doc := h.tokenService.GetSkillDocument()
+	response.Success(c, gin.H{"content": doc})
+}
+

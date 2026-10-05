@@ -146,6 +146,7 @@ func registerAgentTokenRoutes(admin *gin.RouterGroup, h *admin.AgentTokenHandler
 		tokens.POST("", h.Create)
 		tokens.POST("/:id/revoke", h.Revoke)
 		tokens.GET("/scopes", h.GetScopes)
+		tokens.GET("/skill-doc", h.GetSkillDoc)
 	}
 }
 

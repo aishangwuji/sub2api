@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	_ "embed"
 	"encoding/hex"
 	"fmt"
 	"strings"
@@ -11,6 +12,9 @@ import (
 
 	infraerrors "github.com/Wei-Shaw/sub2api/internal/pkg/errors"
 )
+
+//go:embed agent_skill.md
+var embeddedAgentSkillDoc string
 
 // Agent Token 前缀与错误定义
 const (
@@ -302,3 +306,9 @@ func (s *AgentTokenService) RecordAuditLog(ctx context.Context, log *AgentAuditL
 func (s *AgentTokenService) ListAuditLogs(ctx context.Context, filter *AgentAuditLogFilter) ([]*AgentAuditLog, int64, error) {
 	return s.repo.ListAuditLogs(ctx, filter)
 }
+
+// GetSkillDocument 返回内嵌的 Agent Skill 规范文档内容
+func (s *AgentTokenService) GetSkillDocument() string {
+	return embeddedAgentSkillDoc
+}
+

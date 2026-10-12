@@ -4,7 +4,7 @@
  */
 
 import { apiClient } from '../client'
-import type { ApiResponse, PaginatedResponse } from '@/types'
+import type { PaginatedResponse } from '@/types'
 
 export interface AgentToken {
   id: number
@@ -55,37 +55,37 @@ export interface SkillDocResponse {
  */
 export async function listAgentTokens(params?: AgentTokenQuery): Promise<PaginatedResponse<AgentToken>> {
   const { data } = await apiClient.get('/admin/agent-tokens', { params })
-  return data
+  return (data as any)?.data || data
 }
 
 /**
  * Create a new agent token (returns raw token once)
  */
-export async function createAgentToken(body: CreateAgentTokenRequest): Promise<ApiResponse<CreateAgentTokenResponse>> {
+export async function createAgentToken(body: CreateAgentTokenRequest): Promise<CreateAgentTokenResponse> {
   const { data } = await apiClient.post('/admin/agent-tokens', body)
-  return data
+  return (data as any)?.data || data
 }
 
 /**
  * Revoke an existing agent token
  */
-export async function revokeAgentToken(id: number): Promise<ApiResponse<{ revoked: boolean; id: number }>> {
+export async function revokeAgentToken(id: number): Promise<{ revoked: boolean; id: number }> {
   const { data } = await apiClient.post(`/admin/agent-tokens/${id}/revoke`)
-  return data
+  return (data as any)?.data || data
 }
 
 /**
  * Get available agent scopes list
  */
-export async function getAgentScopes(): Promise<ApiResponse<AgentScopeItem[]>> {
+export async function getAgentScopes(): Promise<AgentScopeItem[]> {
   const { data } = await apiClient.get('/admin/agent-tokens/scopes')
-  return data
+  return (data as any)?.data || data
 }
 
 /**
  * Get internal Agent Skill documentation content
  */
-export async function getAgentSkillDoc(): Promise<ApiResponse<SkillDocResponse>> {
+export async function getAgentSkillDoc(): Promise<SkillDocResponse> {
   const { data } = await apiClient.get('/admin/agent-tokens/skill-doc')
-  return data
+  return (data as any)?.data || data
 }

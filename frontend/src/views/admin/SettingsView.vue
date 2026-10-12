@@ -10707,8 +10707,15 @@ const currentOrigin =
   typeof window !== "undefined" ? window.location.origin : "";
 
 function buildApiCallbackUrl(path: string): string {
-  const base = (form.api_base_url || currentOrigin).replace(/\/+$/, "");
-  const apiRoot = base.endsWith("/api/v1") ? base : `${base}/api/v1`;
+  let base = (form.api_base_url || currentOrigin).replace(/\/+$/, "");
+  if (base.endsWith("/api/v1")) {
+    base = base.slice(0, -"/api/v1".length);
+  } else if (base.endsWith("/v1")) {
+    base = base.slice(0, -"/v1".length);
+  } else if (base.endsWith("/api")) {
+    base = base.slice(0, -"/api".length);
+  }
+  const apiRoot = `${base}/api/v1`;
   return `${apiRoot}${path.startsWith("/") ? path : `/${path}`}`;
 }
 

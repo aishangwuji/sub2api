@@ -3,11 +3,21 @@
     <TablePageLayout>
       <!-- Filters and Action Toolbar -->
       <template #filters>
-        <div class="card p-4 sm:p-6 mb-4">
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <!-- Left: Search and Filters -->
-            <div class="flex flex-1 flex-wrap items-center gap-3">
-              <div class="w-full sm:w-72">
+        <div class="space-y-3">
+          <!-- Top Security Notice -->
+          <div class="flex items-center justify-between rounded-xl bg-blue-50/80 px-4 py-2.5 text-xs text-blue-900 ring-1 ring-blue-200/70 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/50">
+            <div class="flex items-center gap-2">
+              <Icon name="shield" size="sm" class="flex-shrink-0 text-blue-600 dark:text-blue-400" />
+              <span class="font-semibold">{{ t('admin.agentTokens.securityNoticeTitle') }}：</span>
+              <span class="text-blue-800/90 dark:text-blue-300/90">{{ t('admin.agentTokens.securityNoticeText') }}</span>
+            </div>
+          </div>
+
+          <!-- Main Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <!-- Left: Search + Revoked filter -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="w-64">
                 <div class="relative">
                   <Icon
                     name="search"
@@ -35,7 +45,7 @@
               </label>
             </div>
 
-            <!-- Right: Actions -->
+            <!-- Right: Action Buttons -->
             <div class="flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -66,15 +76,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Security Callout -->
-          <div class="mt-4 flex items-start gap-3 rounded-xl bg-blue-50/80 p-3.5 text-xs leading-relaxed text-blue-900 ring-1 ring-blue-200/70 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/50">
-            <Icon name="shield" size="md" class="mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
-            <div>
-              <span class="font-bold">{{ t('admin.agentTokens.securityNoticeTitle') }}：</span>
-              <span>{{ t('admin.agentTokens.securityNoticeText') }}</span>
-            </div>
-          </div>
         </div>
       </template>
 
@@ -88,8 +89,8 @@
         >
           <!-- Token Name & Description -->
           <template #cell-name="{ row }">
-            <div class="min-w-0 max-w-[220px]">
-              <div class="truncate font-medium text-gray-900 dark:text-white" :title="row.name">
+            <div class="min-w-0 py-0.5">
+              <div class="font-medium text-gray-900 dark:text-white" :title="row.name">
                 {{ row.name }}
               </div>
               <div v-if="row.description" class="mt-0.5 truncate text-xs text-gray-400" :title="row.description">
@@ -100,7 +101,7 @@
 
           <!-- Prefix & copy -->
           <template #cell-token_prefix="{ value }">
-            <div class="flex items-center gap-1.5">
+            <div class="inline-flex items-center gap-1.5">
               <code class="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-800 dark:bg-dark-800 dark:text-gray-200">
                 {{ value }}...
               </code>
@@ -117,7 +118,7 @@
 
           <!-- Scopes Badges -->
           <template #cell-scopes="{ value }">
-            <div class="flex flex-wrap gap-1 max-w-xs">
+            <div class="flex flex-wrap gap-1 py-0.5">
               <span
                 v-for="scope in value"
                 :key="scope"
@@ -143,35 +144,31 @@
             </span>
           </template>
 
-          <!-- Created At -->
-          <template #cell-created_at="{ value }">
-            <span class="whitespace-nowrap text-xs text-gray-600 dark:text-gray-400">
-              {{ formatDateTime(value) }}
-            </span>
-          </template>
-
-          <!-- Expires At -->
-          <template #cell-expires_at="{ value, row }">
-            <span
-              :class="[
-                'whitespace-nowrap text-xs',
-                isExpired(row) ? 'text-red-500 font-medium' : 'text-gray-600 dark:text-gray-400'
-              ]"
-            >
-              {{ value ? formatDateTime(value) : t('admin.agentTokens.createDialog.expiresOptions.never') }}
-            </span>
+          <!-- Validity / Timeline -->
+          <template #cell-validity="{ row }">
+            <div class="text-xs space-y-0.5">
+              <div class="text-gray-700 dark:text-gray-300">
+                <span class="text-gray-400">至: </span>
+                <span :class="isExpired(row) ? 'text-red-500 font-semibold' : ''">
+                  {{ row.expires_at ? formatDateTime(row.expires_at) : t('admin.agentTokens.createDialog.expiresOptions.never') }}
+                </span>
+              </div>
+              <div class="text-gray-400 text-[11px]">
+                <span>建: </span>{{ formatDateTime(row.created_at) }}
+              </div>
+            </div>
           </template>
 
           <!-- Last Used -->
           <template #cell-last_used_at="{ value }">
-            <span class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+            <span class="text-xs text-gray-500 dark:text-gray-400">
               {{ value ? formatDateTime(value) : '—' }}
             </span>
           </template>
 
           <!-- Actions -->
           <template #cell-actions="{ row }">
-            <div class="flex items-center justify-end gap-2">
+            <div class="flex items-center justify-end">
               <button
                 v-if="!row.revoked_at"
                 type="button"
@@ -186,13 +183,15 @@
             </div>
           </template>
         </DataTable>
+      </template>
 
+      <!-- Fixed Pagination Slot -->
+      <template #pagination>
         <Pagination
           v-if="total > pageSize"
           :page="page"
           :total="total"
           :page-size="pageSize"
-          class="mt-4"
           @update:page="handlePageChange"
         />
       </template>
@@ -310,7 +309,7 @@
       </template>
     </BaseDialog>
 
-    <!-- Token Created Success Dialog (Shown ONCE with plaintext) -->
+    <!-- Token Created Success Dialog -->
     <BaseDialog
       :show="showCreatedResultModal"
       :title="t('admin.agentTokens.createdDialog.title')"
@@ -493,14 +492,13 @@ const expirationOptions = computed(() => [
 ])
 
 const columns = computed<Column[]>(() => [
-  { key: 'name', label: t('admin.agentTokens.columns.name') },
-  { key: 'token_prefix', label: t('admin.agentTokens.columns.prefix') },
-  { key: 'scopes', label: t('admin.agentTokens.columns.scopes') },
-  { key: 'status', label: t('admin.agentTokens.columns.status') },
-  { key: 'created_at', label: t('admin.agentTokens.columns.createdAt') },
-  { key: 'expires_at', label: t('admin.agentTokens.columns.expiresAt') },
-  { key: 'last_used_at', label: t('admin.agentTokens.columns.lastUsedAt') },
-  { key: 'actions', label: t('admin.agentTokens.columns.actions'), align: 'right' }
+  { key: 'name', label: t('admin.agentTokens.columns.name'), class: 'min-w-[140px]' },
+  { key: 'token_prefix', label: t('admin.agentTokens.columns.prefix'), class: 'min-w-[140px]' },
+  { key: 'scopes', label: t('admin.agentTokens.columns.scopes'), class: 'min-w-[200px]' },
+  { key: 'status', label: t('admin.agentTokens.columns.status'), class: 'min-w-[90px]' },
+  { key: 'validity', label: t('admin.agentTokens.columns.expiresAt'), class: 'min-w-[160px]' },
+  { key: 'last_used_at', label: t('admin.agentTokens.columns.lastUsedAt'), class: 'min-w-[120px]' },
+  { key: 'actions', label: t('admin.agentTokens.columns.actions'), align: 'right', class: 'min-w-[100px]' }
 ])
 
 const filteredTokens = computed(() => {
@@ -562,8 +560,8 @@ async function loadTokens() {
       page_size: pageSize.value,
       include_revoked: includeRevoked.value
     })
-    tokens.value = res.items || []
-    total.value = res.total || 0
+    tokens.value = res?.items || (res as any)?.data?.items || []
+    total.value = res?.total ?? (res as any)?.data?.total ?? 0
   } catch (err: any) {
     appStore.showError(err.message || 'Failed to load tokens')
   } finally {
@@ -574,23 +572,29 @@ async function loadTokens() {
 async function loadScopes() {
   try {
     const res = await adminAPI.agentTokens.getAgentScopes()
-    availableScopes.value = res.data || []
+    const list = Array.isArray(res) ? res : ((res as any)?.data || [])
+    if (list.length > 0) {
+      availableScopes.value = list
+      return
+    }
   } catch {
-    availableScopes.value = [
-      { scope: 'status:read', description: 'Read system overview & health metrics' },
-      { scope: 'accounts:read', description: 'List upstream accounts and statuses' },
-      { scope: 'accounts:write', description: 'Update status of upstream accounts' },
-      { scope: 'proxies:read', description: 'List proxy nodes and latency' },
-      { scope: 'proxies:write', description: 'Update proxy nodes statuses' },
-      { scope: 'users:read', description: 'Read user list and basic statistics' },
-      { scope: 'redemptions:write', description: 'Batch generate redemption codes' },
-      { scope: 'ops:trigger', description: 'Trigger batch sync and cache flushes' }
-    ]
+    // fallback
   }
+
+  availableScopes.value = [
+    { scope: 'status:read', description: 'Read system overview & health metrics' },
+    { scope: 'accounts:read', description: 'List upstream accounts and statuses' },
+    { scope: 'accounts:write', description: 'Update status of upstream accounts' },
+    { scope: 'proxies:read', description: 'List proxy nodes and latency' },
+    { scope: 'proxies:write', description: 'Update proxy nodes statuses' },
+    { scope: 'users:read', description: 'Read user list and basic statistics' },
+    { scope: 'redemptions:write', description: 'Batch generate redemption codes' },
+    { scope: 'ops:trigger', description: 'Trigger batch sync and cache flushes' }
+  ]
 }
 
 function handleSearch() {
-  // filteredTokens computed handles client-side filtering
+  // filteredTokens handles client-side filtering
 }
 
 function handlePageChange(newPage: number) {
@@ -642,7 +646,7 @@ async function submitCreateToken() {
       expires_in_days: form.expiresInDays > 0 ? form.expiresInDays : undefined
     })
     closeCreateDialog()
-    createdTokenResult.value = res.data
+    createdTokenResult.value = (res as any)?.data || res
     showCreatedResultModal.value = true
     loadTokens()
   } catch (err: any) {
@@ -681,7 +685,7 @@ async function openSkillDocDialog() {
   loadingSkillDoc.value = true
   try {
     const res = await adminAPI.agentTokens.getAgentSkillDoc()
-    skillDocContent.value = res.data?.content || ''
+    skillDocContent.value = res?.content || (res as any)?.data?.content || ''
   } catch (err: any) {
     appStore.showError(err.message || 'Failed to load skill document')
   } finally {

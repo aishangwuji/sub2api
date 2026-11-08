@@ -215,6 +215,7 @@ export default {
     promptAudit: 'Prompt Audit',
     auditLogs: 'Audit Logs',
     agentTokens: 'Agent Ops',
+    baizhi: 'Baizhi Cloud API',
   },
 
   // Auth

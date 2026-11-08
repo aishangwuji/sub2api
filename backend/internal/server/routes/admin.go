@@ -136,6 +136,20 @@ func RegisterAdminRoutes(
 		if h.Admin != nil && h.Admin.AgentToken != nil {
 			registerAgentTokenRoutes(admin, h.Admin.AgentToken)
 		}
+
+		// 百智云聚合管理
+		if h.Admin != nil && h.Admin.Baizhi != nil {
+			registerBaizhiRoutes(admin, h.Admin.Baizhi)
+		}
+	}
+}
+
+func registerBaizhiRoutes(admin *gin.RouterGroup, h *admin.BaizhiHandler) {
+	baizhi := admin.Group("/baizhi")
+	{
+		baizhi.GET("/config", h.GetConfig)
+		baizhi.PUT("/config", h.UpdateConfig)
+		baizhi.POST("/test", h.TestConnection)
 	}
 }
 

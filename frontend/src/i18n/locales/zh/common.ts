@@ -215,6 +215,7 @@ export default {
     promptAudit: '提示词审计',
     auditLogs: '操作日志',
     agentTokens: 'Agent 运维',
+    baizhi: '百智云调用',
   },
 
   // Auth

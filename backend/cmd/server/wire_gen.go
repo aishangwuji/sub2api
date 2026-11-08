@@ -337,6 +337,11 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	adminHandlers.AgentToken = agentTokenHandler
 	handlers.Manage = manageHandler
 	handlers.AgentAuth = agentAuthMiddleware
+	baizhiService := service.NewBaizhiService(settingRepository)
+	baizhiAdminHandler := admin.NewBaizhiHandler(baizhiService)
+	baizhiGatewayHandler := handler.NewBaizhiGatewayHandler(baizhiService, apiKeyService)
+	adminHandlers.Baizhi = baizhiAdminHandler
+	handlers.BaizhiGateway = baizhiGatewayHandler
 	jwtAuthMiddleware := middleware.NewJWTAuthMiddleware(authService, userService, settingService, auditLogService)
 	optionalJWTAuthMiddleware := middleware.NewOptionalJWTAuthMiddleware(authService, userService, settingService, auditLogService)
 	adminAuthMiddleware := middleware.NewAdminAuthMiddleware(authService, userService, settingService, auditLogService)

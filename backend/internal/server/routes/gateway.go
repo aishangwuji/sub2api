@@ -46,6 +46,11 @@ func RegisterGatewayRoutes(
 	// 保证校验发生在合成路由改写与调度之前，且只看客户端书写的模型名。
 	groupModelAllowlist := middleware.GroupModelAllowlist()
 
+	// 百智云统一聚合转发网关
+	if h.BaizhiGateway != nil {
+		registerBaizhiGateway(r, h.BaizhiGateway)
+	}
+
 	isOpenAIResponsesCompatibleGatewayPlatform := func(c *gin.Context) bool {
 		// openai、grok 与多协议 API Key 供应商经 OpenAI 网关转发（平台清单）。
 		return domain.UsesOpenAIGateway(getGroupPlatform(c))
@@ -691,5 +696,32 @@ func compositeRouteEndpointForPath(path string) string {
 		return service.CompositeRouteEndpointGemini
 	default:
 		return service.CompositeRouteEndpointAny
+	}
+}
+
+func registerBaizhiGateway(r *gin.Engine, h *handler.BaizhiGatewayHandler) {
+	for _, prefix := range []string{"/baizhi", "/api/v1/baizhi"} {
+		g := r.Group(prefix)
+		{
+			g.Any("/scrape/*subpath", h.ForwardScrape)
+			g.Any("/scrape", h.ForwardScrape)
+			g.Any("/web-scrape/*subpath", h.ForwardScrape)
+			g.Any("/web-scrape", h.ForwardScrape)
+
+			g.Any("/search/*subpath", h.ForwardSearch)
+			g.Any("/search", h.ForwardSearch)
+			g.Any("/websearch/*subpath", h.ForwardSearch)
+			g.Any("/websearch", h.ForwardSearch)
+
+			g.Any("/voice/*subpath", h.ForwardVoice)
+			g.Any("/voice", h.ForwardVoice)
+			g.Any("/asr/*subpath", h.ForwardVoice)
+			g.Any("/asr", h.ForwardVoice)
+
+			g.Any("/image/*subpath", h.ForwardImage)
+			g.Any("/image", h.ForwardImage)
+			g.Any("/image-generate/*subpath", h.ForwardImage)
+			g.Any("/image-generate", h.ForwardImage)
+		}
 	}
 }

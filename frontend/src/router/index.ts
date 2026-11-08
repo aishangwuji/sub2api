@@ -451,6 +451,18 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/admin/baizhi',
+    name: 'AdminBaizhi',
+    component: () => import('@/views/admin/BaizhiView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Baizhi Cloud',
+      titleKey: 'admin.baizhi.title',
+      descriptionKey: 'admin.baizhi.description'
+    }
+  },
+  {
     path: '/admin/users',
     name: 'AdminUsers',
     component: () => import('@/views/admin/UsersView.vue'),

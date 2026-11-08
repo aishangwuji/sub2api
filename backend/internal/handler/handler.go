@@ -45,6 +45,7 @@ type AdminHandlers struct {
 	Compliance             *admin.ComplianceHandler
 	AuditLog               *admin.AuditLogHandler
 	AgentToken             *admin.AgentTokenHandler
+	Baizhi                 *admin.BaizhiHandler
 }
 
 // Handlers contains all HTTP handlers
@@ -61,6 +62,7 @@ type Handlers struct {
 	Admin            *AdminHandlers
 	Gateway          *GatewayHandler
 	OpenAIGateway    *OpenAIGatewayHandler
+	BaizhiGateway    *BaizhiGatewayHandler
 	Setting          *SettingHandler
 	Totp             *TotpHandler
 	Passkey          *PasskeyHandler

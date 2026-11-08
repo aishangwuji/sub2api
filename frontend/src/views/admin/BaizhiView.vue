@@ -7,15 +7,12 @@
           <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {{ t('admin.baizhi.title') }}
           </h1>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {{ t('admin.baizhi.description') }}
-          </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
-            class="btn btn-secondary inline-flex items-center gap-1.5"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
             :disabled="loading"
             @click="loadConfig"
           >
@@ -25,7 +22,7 @@
 
           <button
             type="button"
-            class="btn btn-primary inline-flex items-center gap-1.5"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gray-900 hover:bg-black dark:bg-teal-600 dark:hover:bg-teal-500 shadow-sm transition-all cursor-pointer disabled:opacity-50"
             :disabled="saving"
             @click="saveConfig"
           >
@@ -36,62 +33,54 @@
       </div>
 
       <!-- Top Gateway Overview Card -->
-      <div class="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
+      <div class="rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-center">
           <!-- Gateway Base URL -->
-          <div class="space-y-1.5 lg:col-span-7">
+          <div class="space-y-2 lg:col-span-7">
             <div class="flex items-center gap-2">
               <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
                 {{ t('admin.baizhi.overview.gatewayBaseUrl') }}
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <code class="rounded-lg bg-gray-100 px-3 py-1.5 font-mono text-sm font-semibold text-primary-600 select-all dark:bg-dark-900 dark:text-primary-400">
+              <code class="rounded-xl border border-gray-200 bg-gray-100/90 px-3.5 py-1.5 font-mono text-sm font-bold text-gray-900 select-all dark:border-dark-700 dark:bg-dark-900 dark:text-teal-300">
                 {{ gatewayBaseUrl }}
               </code>
               <button
                 type="button"
-                class="btn btn-secondary btn-sm"
+                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
                 :title="t('admin.baizhi.docs.copyCode')"
                 @click="copyGatewayUrl"
               >
                 <Icon :name="copiedUrl ? 'check' : 'clipboard'" size="sm" />
-                <span class="text-xs">{{ copiedUrl ? t('admin.baizhi.docs.copied') : t('common.copy') }}</span>
+                <span>{{ copiedUrl ? t('admin.baizhi.docs.copied') : t('common.copy') }}</span>
               </button>
             </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-              {{ t('admin.baizhi.overview.gatewayBaseUrlHint') }}
-            </p>
           </div>
 
           <!-- Auth & Stats -->
           <div class="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-3 lg:col-span-5 lg:border-t-0 lg:border-l lg:border-gray-100 lg:pl-6 lg:pt-0 dark:border-dark-700">
             <!-- Auth Required Switch -->
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <input
-                  id="authRequiredToggle"
-                  v-model="config.auth_required"
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700"
-                />
-                <label for="authRequiredToggle" class="cursor-pointer text-sm font-medium text-gray-800 dark:text-gray-200">
-                  {{ t('admin.baizhi.overview.authRequired') }}
-                </label>
-              </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ t('admin.baizhi.overview.authRequiredHint') }}
-              </p>
+            <div class="flex items-center gap-2.5">
+              <input
+                id="authRequiredToggle"
+                v-model="config.auth_required"
+                type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-dark-600 dark:bg-dark-700 dark:text-teal-500 cursor-pointer"
+              />
+              <label for="authRequiredToggle" class="cursor-pointer text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {{ t('admin.baizhi.overview.authRequired') }}
+              </label>
             </div>
 
             <!-- Stats badges -->
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-dark-700/80 px-3 py-1 text-xs font-semibold text-gray-800 dark:text-gray-200 border border-gray-200/80 dark:border-dark-600">
                 <Icon name="cube" size="xs" />
                 {{ t('admin.baizhi.overview.activeServices') }}: {{ activeServicesCount }}/4
               </span>
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-dark-700/80 px-3 py-1 text-xs font-semibold text-gray-800 dark:text-gray-200 border border-gray-200/80 dark:border-dark-600">
                 <Icon name="key" size="xs" />
                 {{ t('admin.baizhi.overview.totalKeys') }}: {{ totalKeysCount }}
               </span>
@@ -104,11 +93,11 @@
       <div class="flex border-b border-gray-200 dark:border-dark-700">
         <button
           type="button"
-          class="inline-flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors"
+          class="inline-flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm transition-colors cursor-pointer"
           :class="[
             activeTab === 'config'
-              ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-              : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              ? 'border-gray-900 text-gray-900 font-bold dark:border-white dark:text-white'
+              : 'border-transparent text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 font-medium'
           ]"
           @click="activeTab = 'config'"
         >
@@ -118,11 +107,11 @@
 
         <button
           type="button"
-          class="inline-flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors"
+          class="inline-flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm transition-colors cursor-pointer"
           :class="[
             activeTab === 'docs'
-              ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-              : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              ? 'border-gray-900 text-gray-900 font-bold dark:border-white dark:text-white'
+              : 'border-transparent text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 font-medium'
           ]"
           @click="activeTab = 'docs'"
         >
@@ -134,62 +123,50 @@
       <!-- TAB 1: Configuration Cards -->
       <div v-show="activeTab === 'config'" class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Card 1: Web Scrape -->
-        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
+        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
           <div class="space-y-4">
             <!-- Header -->
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
                   <Icon name="globe" size="md" />
                 </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white">
-                    {{ t('admin.baizhi.services.scrape') }}
-                  </h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ t('admin.baizhi.services.scrapeDesc') }}
-                  </p>
-                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base">
+                  {{ t('admin.baizhi.services.scrape') }}
+                </h3>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input v-model="config.web_scrape.enabled" type="checkbox" class="peer sr-only" />
-                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-gray-900 dark:peer-checked:bg-teal-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
             </div>
 
             <!-- Route Prefix & Upstream -->
-            <div class="rounded-xl bg-gray-50 p-3 text-xs dark:bg-dark-900/50 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.gatewayPath') }}:</span>
-                <code class="font-mono font-semibold text-primary-600 dark:text-primary-400">/baizhi/scrape/*</code>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.upstreamBaseUrl') }}:</span>
-                <span class="truncate font-mono text-gray-700 dark:text-gray-300">{{ config.web_scrape.base_url }}</span>
-              </div>
+            <div class="flex items-center justify-between text-xs px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/70 dark:border-dark-700/60">
+              <span class="font-mono font-bold text-gray-900 dark:text-gray-100 select-all">/baizhi/scrape/*</span>
+              <span class="font-mono text-gray-500 dark:text-gray-400 text-[11px] truncate max-w-[210px]">{{ config.web_scrape.base_url }}</span>
             </div>
 
-            <!-- Dispatch Strategy -->
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
-              <select
+            <!-- Dispatch Strategy via Pill Popover -->
+            <div class="flex items-center justify-between py-0.5">
+              <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
+              <PillPopover
                 v-model="config.web_scrape.strategy"
-                class="select select-sm w-44 text-xs"
-              >
-                <option value="round_robin">{{ t('admin.baizhi.card.strategyRoundRobin') }}</option>
-                <option value="failover">{{ t('admin.baizhi.card.strategyFailover') }}</option>
-              </select>
+                :options="strategyOptions"
+                group-title="调度模式"
+                align="end"
+              />
             </div>
 
             <!-- Key List -->
-            <div class="space-y-2">
+            <div class="space-y-2 pt-1 border-t border-gray-100 dark:border-dark-700">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   {{ t('admin.baizhi.card.activeKeysCount') }} ({{ config.web_scrape.keys.filter(k => k.enabled).length }}/{{ config.web_scrape.keys.length }})
                 </span>
                 <button
                   type="button"
-                  class="btn btn-secondary btn-xs inline-flex items-center gap-1"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('web_scrape')"
                 >
                   <Icon name="plus" size="xs" />
@@ -205,35 +182,35 @@
                 <div
                   v-for="(keyItem, idx) in config.web_scrape.keys"
                   :key="keyItem.id || idx"
-                  class="flex items-center justify-between rounded-xl border border-gray-200/60 bg-gray-50/50 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/40"
+                  class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
                     <div class="flex items-center gap-2">
-                      <span class="font-medium text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
-                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
+                      <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
                       </span>
-                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] text-rose-600 dark:text-rose-400">
+                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
                         <Icon name="xCircle" size="xs" />
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-500 dark:text-gray-400 select-all">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-1.5 pl-2">
+                  <div class="flex items-center gap-2 pl-2">
                     <input
                       v-model="keyItem.enabled"
                       type="checkbox"
-                      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
+                      class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
                       :title="t('admin.baizhi.card.status')"
                     />
                     <button
                       type="button"
-                      class="btn btn-secondary btn-xs"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       :title="t('admin.baizhi.card.testConnection')"
                       @click="runTest('web_scrape', keyItem)"
@@ -243,7 +220,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn btn-ghost btn-xs text-rose-500 hover:text-rose-700"
+                      class="p-1.5 rounded-full text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       @click="removeKey('web_scrape', idx)"
                     >
                       <Icon name="trash" size="xs" />
@@ -256,56 +233,48 @@
         </div>
 
         <!-- Card 2: Web Search -->
-        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
+        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
           <div class="space-y-4">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
                   <Icon name="search" size="md" />
                 </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white">
-                    {{ t('admin.baizhi.services.search') }}
-                  </h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ t('admin.baizhi.services.searchDesc') }}
-                  </p>
-                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base">
+                  {{ t('admin.baizhi.services.search') }}
+                </h3>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input v-model="config.web_search.enabled" type="checkbox" class="peer sr-only" />
-                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-gray-900 dark:peer-checked:bg-teal-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
             </div>
 
-            <div class="rounded-xl bg-gray-50 p-3 text-xs dark:bg-dark-900/50 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.gatewayPath') }}:</span>
-                <code class="font-mono font-semibold text-primary-600 dark:text-primary-400">/baizhi/search/*</code>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.upstreamBaseUrl') }}:</span>
-                <span class="truncate font-mono text-gray-700 dark:text-gray-300">{{ config.web_search.base_url }}</span>
-              </div>
+            <div class="flex items-center justify-between text-xs px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/70 dark:border-dark-700/60">
+              <span class="font-mono font-bold text-gray-900 dark:text-gray-100 select-all">/baizhi/search/*</span>
+              <span class="font-mono text-gray-500 dark:text-gray-400 text-[11px] truncate max-w-[210px]">{{ config.web_search.base_url }}</span>
             </div>
 
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
-              <select v-model="config.web_search.strategy" class="select select-sm w-44 text-xs">
-                <option value="round_robin">{{ t('admin.baizhi.card.strategyRoundRobin') }}</option>
-                <option value="failover">{{ t('admin.baizhi.card.strategyFailover') }}</option>
-              </select>
+            <!-- Dispatch Strategy via Pill Popover -->
+            <div class="flex items-center justify-between py-0.5">
+              <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
+              <PillPopover
+                v-model="config.web_search.strategy"
+                :options="strategyOptions"
+                group-title="调度模式"
+                align="end"
+              />
             </div>
 
             <!-- Key List -->
-            <div class="space-y-2">
+            <div class="space-y-2 pt-1 border-t border-gray-100 dark:border-dark-700">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   {{ t('admin.baizhi.card.activeKeysCount') }} ({{ config.web_search.keys.filter(k => k.enabled).length }}/{{ config.web_search.keys.length }})
                 </span>
                 <button
                   type="button"
-                  class="btn btn-secondary btn-xs inline-flex items-center gap-1"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('web_search')"
                 >
                   <Icon name="plus" size="xs" />
@@ -320,34 +289,34 @@
                 <div
                   v-for="(keyItem, idx) in config.web_search.keys"
                   :key="keyItem.id || idx"
-                  class="flex items-center justify-between rounded-xl border border-gray-200/60 bg-gray-50/50 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/40"
+                  class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
                     <div class="flex items-center gap-2">
-                      <span class="font-medium text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
-                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
+                      <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
                       </span>
-                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] text-rose-600 dark:text-rose-400">
+                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
                         <Icon name="xCircle" size="xs" />
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-500 dark:text-gray-400 select-all">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-1.5 pl-2">
+                  <div class="flex items-center gap-2 pl-2">
                     <input
                       v-model="keyItem.enabled"
                       type="checkbox"
-                      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
+                      class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
                     />
                     <button
                       type="button"
-                      class="btn btn-secondary btn-xs"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('web_search', keyItem)"
                     >
@@ -356,7 +325,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn btn-ghost btn-xs text-rose-500 hover:text-rose-700"
+                      class="p-1.5 rounded-full text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       @click="removeKey('web_search', idx)"
                     >
                       <Icon name="trash" size="xs" />
@@ -369,56 +338,48 @@
         </div>
 
         <!-- Card 3: Voice ASR/TTS -->
-        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
+        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
           <div class="space-y-4">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
                   <Icon name="chat" size="md" />
                 </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white">
-                    {{ t('admin.baizhi.services.voice') }}
-                  </h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ t('admin.baizhi.services.voiceDesc') }}
-                  </p>
-                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base">
+                  {{ t('admin.baizhi.services.voice') }}
+                </h3>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input v-model="config.voice.enabled" type="checkbox" class="peer sr-only" />
-                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-gray-900 dark:peer-checked:bg-teal-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
             </div>
 
-            <div class="rounded-xl bg-gray-50 p-3 text-xs dark:bg-dark-900/50 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.gatewayPath') }}:</span>
-                <code class="font-mono font-semibold text-primary-600 dark:text-primary-400">/baizhi/voice/* (HTTP & WS)</code>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.upstreamBaseUrl') }}:</span>
-                <span class="truncate font-mono text-gray-700 dark:text-gray-300">{{ config.voice.base_url }}</span>
-              </div>
+            <div class="flex items-center justify-between text-xs px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/70 dark:border-dark-700/60">
+              <span class="font-mono font-bold text-gray-900 dark:text-gray-100 select-all">/baizhi/voice/* (HTTP & WS)</span>
+              <span class="font-mono text-gray-500 dark:text-gray-400 text-[11px] truncate max-w-[210px]">{{ config.voice.base_url }}</span>
             </div>
 
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
-              <select v-model="config.voice.strategy" class="select select-sm w-44 text-xs">
-                <option value="round_robin">{{ t('admin.baizhi.card.strategyRoundRobin') }}</option>
-                <option value="failover">{{ t('admin.baizhi.card.strategyFailover') }}</option>
-              </select>
+            <!-- Dispatch Strategy via Pill Popover -->
+            <div class="flex items-center justify-between py-0.5">
+              <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
+              <PillPopover
+                v-model="config.voice.strategy"
+                :options="strategyOptions"
+                group-title="调度模式"
+                align="end"
+              />
             </div>
 
             <!-- Key List -->
-            <div class="space-y-2">
+            <div class="space-y-2 pt-1 border-t border-gray-100 dark:border-dark-700">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   {{ t('admin.baizhi.card.activeKeysCount') }} ({{ config.voice.keys.filter(k => k.enabled).length }}/{{ config.voice.keys.length }})
                 </span>
                 <button
                   type="button"
-                  class="btn btn-secondary btn-xs inline-flex items-center gap-1"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('voice')"
                 >
                   <Icon name="plus" size="xs" />
@@ -433,34 +394,34 @@
                 <div
                   v-for="(keyItem, idx) in config.voice.keys"
                   :key="keyItem.id || idx"
-                  class="flex items-center justify-between rounded-xl border border-gray-200/60 bg-gray-50/50 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/40"
+                  class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
                     <div class="flex items-center gap-2">
-                      <span class="font-medium text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
-                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
+                      <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
                       </span>
-                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] text-rose-600 dark:text-rose-400">
+                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
                         <Icon name="xCircle" size="xs" />
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-500 dark:text-gray-400 select-all">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-1.5 pl-2">
+                  <div class="flex items-center gap-2 pl-2">
                     <input
                       v-model="keyItem.enabled"
                       type="checkbox"
-                      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
+                      class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
                     />
                     <button
                       type="button"
-                      class="btn btn-secondary btn-xs"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('voice', keyItem)"
                     >
@@ -469,7 +430,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn btn-ghost btn-xs text-rose-500 hover:text-rose-700"
+                      class="p-1.5 rounded-full text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       @click="removeKey('voice', idx)"
                     >
                       <Icon name="trash" size="xs" />
@@ -482,56 +443,48 @@
         </div>
 
         <!-- Card 4: Image Generate -->
-        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
+        <div class="flex flex-col justify-between rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-dark-700 dark:bg-dark-800">
           <div class="space-y-4">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-600 dark:bg-pink-950/50 dark:text-pink-400">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
                   <Icon name="sparkles" size="md" />
                 </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white">
-                    {{ t('admin.baizhi.services.image') }}
-                  </h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ t('admin.baizhi.services.imageDesc') }}
-                  </p>
-                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base">
+                  {{ t('admin.baizhi.services.image') }}
+                </h3>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input v-model="config.image_generate.enabled" type="checkbox" class="peer sr-only" />
-                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-primary-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                <div class="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-gray-900 dark:peer-checked:bg-teal-600 peer-focus:outline-none dark:bg-dark-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
             </div>
 
-            <div class="rounded-xl bg-gray-50 p-3 text-xs dark:bg-dark-900/50 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.gatewayPath') }}:</span>
-                <code class="font-mono font-semibold text-primary-600 dark:text-primary-400">/baizhi/image/*</code>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">{{ t('admin.baizhi.card.upstreamBaseUrl') }}:</span>
-                <span class="truncate font-mono text-gray-700 dark:text-gray-300">{{ config.image_generate.base_url }}</span>
-              </div>
+            <div class="flex items-center justify-between text-xs px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/70 dark:border-dark-700/60">
+              <span class="font-mono font-bold text-gray-900 dark:text-gray-100 select-all">/baizhi/image/*</span>
+              <span class="font-mono text-gray-500 dark:text-gray-400 text-[11px] truncate max-w-[210px]">{{ config.image_generate.base_url }}</span>
             </div>
 
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
-              <select v-model="config.image_generate.strategy" class="select select-sm w-44 text-xs">
-                <option value="round_robin">{{ t('admin.baizhi.card.strategyRoundRobin') }}</option>
-                <option value="failover">{{ t('admin.baizhi.card.strategyFailover') }}</option>
-              </select>
+            <!-- Dispatch Strategy via Pill Popover -->
+            <div class="flex items-center justify-between py-0.5">
+              <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">{{ t('admin.baizhi.card.strategy') }}</span>
+              <PillPopover
+                v-model="config.image_generate.strategy"
+                :options="strategyOptions"
+                group-title="调度模式"
+                align="end"
+              />
             </div>
 
             <!-- Key List -->
-            <div class="space-y-2">
+            <div class="space-y-2 pt-1 border-t border-gray-100 dark:border-dark-700">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   {{ t('admin.baizhi.card.activeKeysCount') }} ({{ config.image_generate.keys.filter(k => k.enabled).length }}/{{ config.image_generate.keys.length }})
                 </span>
                 <button
                   type="button"
-                  class="btn btn-secondary btn-xs inline-flex items-center gap-1"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('image_generate')"
                 >
                   <Icon name="plus" size="xs" />
@@ -546,34 +499,34 @@
                 <div
                   v-for="(keyItem, idx) in config.image_generate.keys"
                   :key="keyItem.id || idx"
-                  class="flex items-center justify-between rounded-xl border border-gray-200/60 bg-gray-50/50 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/40"
+                  class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
                     <div class="flex items-center gap-2">
-                      <span class="font-medium text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
-                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
+                      <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+                      <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
                       </span>
-                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] text-rose-600 dark:text-rose-400">
+                      <span v-else-if="testStates[keyItem.id]?.error" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
                         <Icon name="xCircle" size="xs" />
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-500 dark:text-gray-400 select-all">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-1.5 pl-2">
+                  <div class="flex items-center gap-2 pl-2">
                     <input
                       v-model="keyItem.enabled"
                       type="checkbox"
-                      class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
+                      class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-dark-600 dark:bg-dark-700 cursor-pointer"
                     />
                     <button
                       type="button"
-                      class="btn btn-secondary btn-xs"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('image_generate', keyItem)"
                     >
@@ -582,7 +535,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn btn-ghost btn-xs text-rose-500 hover:text-rose-700"
+                      class="p-1.5 rounded-full text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       @click="removeKey('image_generate', idx)"
                     >
                       <Icon name="trash" size="xs" />
@@ -597,29 +550,17 @@
 
       <!-- TAB 2: Documentation View -->
       <div v-show="activeTab === 'docs'" class="space-y-6">
-        <!-- Documentation Hero -->
-        <div class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800">
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ t('admin.baizhi.docs.title') }}
-          </h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            {{ t('admin.baizhi.docs.subtitle') }}
-          </p>
-
-          <div class="mt-4 rounded-xl bg-blue-50/70 p-4 text-xs text-blue-900 ring-1 ring-blue-200/70 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/50 space-y-1">
-            <span class="font-semibold">{{ t('admin.baizhi.docs.authGuideTitle') }}:</span>
-            <p>{{ t('admin.baizhi.docs.authGuideText') }}</p>
-            <code class="block font-mono bg-blue-100/70 p-2 rounded dark:bg-blue-900/40">
-              Authorization: Bearer &lt;YOUR_SUB2API_API_KEY&gt;
-            </code>
-          </div>
+        <!-- Documentation Header -->
+        <div class="flex items-center justify-between text-xs px-3.5 py-2.5 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/80 dark:border-dark-700">
+          <span class="font-mono text-gray-700 dark:text-gray-300 font-medium">
+            鉴权请求头格式: <code class="px-2 py-0.5 rounded bg-gray-200/80 dark:bg-dark-800 text-gray-900 dark:text-white font-bold">Authorization: Bearer YOUR_SUB2API_API_KEY</code>
+          </span>
         </div>
 
-        <!-- Documentation Sections for each service -->
         <!-- 1. Web Scrape Docs -->
-        <div class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
-          <div class="flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-dark-700">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+        <div class="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
+          <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3 dark:border-dark-700">
+            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
               <Icon name="globe" size="sm" />
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">1. {{ t('admin.baizhi.services.scrape') }}</h3>
@@ -627,7 +568,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-gray-50 text-gray-600 dark:bg-dark-900/50 dark:text-gray-400">
+              <thead class="bg-gray-50 text-gray-700 dark:bg-dark-900/50 dark:text-gray-300 font-semibold">
                 <tr>
                   <th class="p-2.5">方法</th>
                   <th class="p-2.5">网关入口路径</th>
@@ -635,40 +576,40 @@
                   <th class="p-2.5">计费标准</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-700 dark:text-gray-300 font-mono">
+              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-800 dark:text-gray-200 font-mono">
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/scrape</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/scrape</td>
                   <td class="p-2.5 font-sans">打开网页返回整页 Markdown 或 JSON 正文</td>
                   <td class="p-2.5 font-sans">5 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/extract</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/extract</td>
                   <td class="p-2.5 font-sans">从网页结构化提取指定字段 (fields)</td>
                   <td class="p-2.5 font-sans">10 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/extract/suggest</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/extract/suggest</td>
                   <td class="p-2.5 font-sans">智能提取字段建议 (生成 name/type/hint)</td>
                   <td class="p-2.5 font-sans">2 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/extract/batch</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/extract/batch</td>
                   <td class="p-2.5 font-sans">批量多网页提取相同字段 (1-20页)</td>
                   <td class="p-2.5 font-sans">10 积分/成功页</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/extract/organize</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/extract/organize</td>
                   <td class="p-2.5 font-sans">把多页提取结果整理合成一篇 Markdown 结构稿</td>
                   <td class="p-2.5 font-sans">5 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-info text-[10px]">GET</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/scrape/openapi/v1/pricing</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/scrape/openapi/v1/pricing</td>
                   <td class="p-2.5 font-sans">查询当前积分与功能定价规则</td>
                   <td class="p-2.5 font-sans">免费</td>
                 </tr>
@@ -677,12 +618,12 @@
           </div>
 
           <!-- Code Snippet -->
-          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200">
+          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200 shadow-sm">
             <div class="flex items-center justify-between pb-2 text-gray-400 border-b border-gray-800">
-              <span>cURL 示例 (POST /baizhi/scrape/openapi/scrape)</span>
+              <span class="font-sans">cURL 示例 (POST /baizhi/scrape/openapi/scrape)</span>
               <button
                 type="button"
-                class="hover:text-white"
+                class="px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white transition-all cursor-pointer"
                 @click="copySnippet(scrapeSnippet)"
               >
                 复制
@@ -693,9 +634,9 @@
         </div>
 
         <!-- 2. Web Search Docs -->
-        <div class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
-          <div class="flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-dark-700">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">
+        <div class="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
+          <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3 dark:border-dark-700">
+            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
               <Icon name="search" size="sm" />
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">2. {{ t('admin.baizhi.services.search') }}</h3>
@@ -703,7 +644,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-gray-50 text-gray-600 dark:bg-dark-900/50 dark:text-gray-400">
+              <thead class="bg-gray-50 text-gray-700 dark:bg-dark-900/50 dark:text-gray-300 font-semibold">
                 <tr>
                   <th class="p-2.5">方法</th>
                   <th class="p-2.5">网关入口路径</th>
@@ -711,34 +652,34 @@
                   <th class="p-2.5">计费标准</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-700 dark:text-gray-300 font-mono">
+              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-800 dark:text-gray-200 font-mono">
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/search/openapi/search</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/search/openapi/search</td>
                   <td class="p-2.5 font-sans">通用网页关键词搜索 (含标题、摘要、发布时间、域名过滤)</td>
                   <td class="p-2.5 font-sans">2.5 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/search/openapi/ai_search</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/search/openapi/ai_search</td>
                   <td class="p-2.5 font-sans">AI 综合搜索 (网关全程 SSE 实时流式响应 delta 推送)</td>
                   <td class="p-2.5 font-sans">2.5 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/search/openapi/news_search</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/search/openapi/news_search</td>
                   <td class="p-2.5 font-sans">近期新闻事件搜索 (带 AI 综合要闻摘要 need_summary)</td>
                   <td class="p-2.5 font-sans">10 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/search/openapi/image_search_by_text</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/search/openapi/image_search_by_text</td>
                   <td class="p-2.5 font-sans">文本搜索高清图片 (支持构图 wide/tall/square 筛选)</td>
                   <td class="p-2.5 font-sans">2.5 积分/次</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/search/openapi/image_search_by_image</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/search/openapi/image_search_by_image</td>
                   <td class="p-2.5 font-sans">以图搜图 (支持 multipart/form-data 原图上传)</td>
                   <td class="p-2.5 font-sans">10 积分/次</td>
                 </tr>
@@ -747,12 +688,12 @@
           </div>
 
           <!-- Code Snippet -->
-          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200">
+          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200 shadow-sm">
             <div class="flex items-center justify-between pb-2 text-gray-400 border-b border-gray-800">
-              <span>cURL 示例 (POST /baizhi/search/openapi/search)</span>
+              <span class="font-sans">cURL 示例 (POST /baizhi/search/openapi/search)</span>
               <button
                 type="button"
-                class="hover:text-white"
+                class="px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white transition-all cursor-pointer"
                 @click="copySnippet(searchSnippet)"
               >
                 复制
@@ -763,9 +704,9 @@
         </div>
 
         <!-- 3. Voice Docs -->
-        <div class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
-          <div class="flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-dark-700">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+        <div class="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
+          <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3 dark:border-dark-700">
+            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
               <Icon name="chat" size="sm" />
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">3. {{ t('admin.baizhi.services.voice') }}</h3>
@@ -773,7 +714,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-gray-50 text-gray-600 dark:bg-dark-900/50 dark:text-gray-400">
+              <thead class="bg-gray-50 text-gray-700 dark:bg-dark-900/50 dark:text-gray-300 font-semibold">
                 <tr>
                   <th class="p-2.5">方法</th>
                   <th class="p-2.5">网关入口路径</th>
@@ -781,34 +722,34 @@
                   <th class="p-2.5">格式/协议</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-700 dark:text-gray-300 font-mono">
+              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-800 dark:text-gray-200 font-mono">
                 <tr>
                   <td class="p-2.5"><span class="badge badge-warning text-[10px]">WSS</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/voice/openapi/v1/realtime</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/voice/openapi/v1/realtime</td>
                   <td class="p-2.5 font-sans">实时语音转文字 (STT) 或 文字转语音 (TTS)</td>
                   <td class="p-2.5 font-sans">WebSocket 全双工</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/voice/openapi/v1/audio</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/voice/openapi/v1/audio</td>
                   <td class="p-2.5 font-sans">录音文件识别任务创建 或 HTTP 文字转语音 (WAV)</td>
                   <td class="p-2.5 font-sans">JSON / WAV 音频流</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-info text-[10px]">GET</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/voice/openapi/v1/audio/:task_id</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/voice/openapi/v1/audio/:task_id</td>
                   <td class="p-2.5 font-sans">查询录音识别状态及分句文本 (utterances)</td>
                   <td class="p-2.5 font-sans">JSON</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-info text-[10px]">GET</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/voice/openapi/v1/audio/:task_id/export</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/voice/openapi/v1/audio/:task_id/export</td>
                   <td class="p-2.5 font-sans">导出字幕或全文本 (?format=srt|vtt|txt)</td>
                   <td class="p-2.5 font-sans">Text / Subtitle</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-info text-[10px]">GET</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/voice/openapi/v1/voices?type=tts</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/voice/openapi/v1/voices?type=tts</td>
                   <td class="p-2.5 font-sans">查询所有可用音色列表与试听地址</td>
                   <td class="p-2.5 font-sans">JSON</td>
                 </tr>
@@ -817,12 +758,12 @@
           </div>
 
           <!-- Code Snippet -->
-          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200">
+          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200 shadow-sm">
             <div class="flex items-center justify-between pb-2 text-gray-400 border-b border-gray-800">
-              <span>cURL 示例 (HTTP 文字转语音 POST /baizhi/voice/openapi/v1/audio)</span>
+              <span class="font-sans">cURL 示例 (HTTP 文字转语音 POST /baizhi/voice/openapi/v1/audio)</span>
               <button
                 type="button"
-                class="hover:text-white"
+                class="px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white transition-all cursor-pointer"
                 @click="copySnippet(voiceSnippet)"
               >
                 复制
@@ -833,9 +774,9 @@
         </div>
 
         <!-- 4. Image Generate Docs -->
-        <div class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
-          <div class="flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-dark-700">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-50 text-pink-600 dark:bg-pink-950/50 dark:text-pink-400">
+        <div class="rounded-2xl border border-gray-200/90 bg-white p-6 shadow-xs dark:border-dark-700 dark:bg-dark-800 space-y-4">
+          <div class="flex items-center gap-2.5 border-b border-gray-100 pb-3 dark:border-dark-700">
+            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-gray-800 dark:bg-dark-700 dark:text-gray-200">
               <Icon name="sparkles" size="sm" />
             </div>
             <h3 class="text-base font-bold text-gray-900 dark:text-white">4. {{ t('admin.baizhi.services.image') }}</h3>
@@ -843,7 +784,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-gray-50 text-gray-600 dark:bg-dark-900/50 dark:text-gray-400">
+              <thead class="bg-gray-50 text-gray-700 dark:bg-dark-900/50 dark:text-gray-300 font-semibold">
                 <tr>
                   <th class="p-2.5">方法</th>
                   <th class="p-2.5">网关入口路径</th>
@@ -851,34 +792,34 @@
                   <th class="p-2.5">返回说明</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-700 dark:text-gray-300 font-mono">
+              <tbody class="divide-y divide-gray-100 dark:divide-dark-700 text-gray-800 dark:text-gray-200 font-mono">
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/image/openapi/v1/text_to_image</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/image/openapi/v1/text_to_image</td>
                   <td class="p-2.5 font-sans">文字提示词异步创建文生图任务</td>
                   <td class="p-2.5 font-sans">立即返回 task_id</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/image/openapi/v1/edit_image</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/image/openapi/v1/edit_image</td>
                   <td class="p-2.5 font-sans">基于参考图与提示词创建图生图任务</td>
                   <td class="p-2.5 font-sans">立即返回 task_id</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/image/openapi/v1/uploads/presign</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/image/openapi/v1/uploads/presign</td>
                   <td class="p-2.5 font-sans">获取本地参考图预签名上传凭证 (PUT 对象存储)</td>
                   <td class="p-2.5 font-sans">upload_url / image_url</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-info text-[10px]">GET</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/image/openapi/v1/tasks/:task_id</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/image/openapi/v1/tasks/:task_id</td>
                   <td class="p-2.5 font-sans">轮询任务状态及获取图片 URL (image_urls)</td>
                   <td class="p-2.5 font-sans">status / image_urls</td>
                 </tr>
                 <tr>
                   <td class="p-2.5"><span class="badge badge-success text-[10px]">POST</span></td>
-                  <td class="p-2.5 font-bold text-primary-600 dark:text-primary-400">/baizhi/image/openapi/v1/tasks/:task_id/retry</td>
+                  <td class="p-2.5 font-bold text-gray-900 dark:text-white">/baizhi/image/openapi/v1/tasks/:task_id/retry</td>
                   <td class="p-2.5 font-sans">重试失败或补齐缺失图片任务</td>
                   <td class="p-2.5 font-sans">status: processing</td>
                 </tr>
@@ -887,12 +828,12 @@
           </div>
 
           <!-- Code Snippet -->
-          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200">
+          <div class="rounded-xl bg-gray-900 p-4 font-mono text-xs text-gray-200 shadow-sm">
             <div class="flex items-center justify-between pb-2 text-gray-400 border-b border-gray-800">
-              <span>cURL 示例 (文生图 POST /baizhi/image/openapi/v1/text_to_image)</span>
+              <span class="font-sans">cURL 示例 (文生图 POST /baizhi/image/openapi/v1/text_to_image)</span>
               <button
                 type="button"
-                class="hover:text-white"
+                class="px-2.5 py-1 rounded-full border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white transition-all cursor-pointer"
                 @click="copySnippet(imageSnippet)"
               >
                 复制
@@ -912,25 +853,25 @@
     >
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">
             {{ t('admin.baizhi.dialog.accountName') }}
           </label>
           <input
             v-model.trim="newKeyForm.account_name"
             type="text"
-            class="input input-sm mt-1 w-full"
+            class="input input-sm mt-1.5 w-full"
             :placeholder="t('admin.baizhi.dialog.accountNamePlaceholder')"
           />
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">
             {{ t('admin.baizhi.dialog.apiKey') }}
           </label>
           <input
             v-model.trim="newKeyForm.api_key"
             type="password"
-            class="input input-sm mt-1 w-full font-mono"
+            class="input input-sm mt-1.5 w-full font-mono"
             :placeholder="t('admin.baizhi.dialog.apiKeyPlaceholder')"
           />
         </div>
@@ -939,14 +880,14 @@
       <template #footer>
         <button
           type="button"
-          class="btn btn-secondary btn-sm"
+          class="px-3.5 py-1.5 rounded-xl text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 cursor-pointer"
           @click="showAddKeyDialog = false"
         >
           {{ t('admin.baizhi.dialog.cancel') }}
         </button>
         <button
           type="button"
-          class="btn btn-primary btn-sm"
+          class="px-4 py-1.5 rounded-xl text-xs font-semibold text-white bg-gray-900 hover:bg-black dark:bg-teal-600 dark:hover:bg-teal-500 cursor-pointer disabled:opacity-50"
           :disabled="!newKeyForm.account_name || !newKeyForm.api_key"
           @click="confirmAddKey"
         >
@@ -964,6 +905,7 @@ import { useAppStore } from '@/stores'
 import { useClipboard } from '@/composables/useClipboard'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseDialog from '@/components/common/BaseDialog.vue'
+import PillPopover, { type PillOption } from '@/components/common/PillPopover.vue'
 import Icon from '@/components/icons/Icon.vue'
 import {
   getBaizhiConfig,
@@ -981,6 +923,11 @@ const activeTab = ref<'config' | 'docs'>('config')
 const loading = ref(false)
 const saving = ref(false)
 const copiedUrl = ref(false)
+
+const strategyOptions: PillOption[] = [
+  { value: 'round_robin', label: '轮询均衡', hint: 'Round Robin' },
+  { value: 'failover', label: '主备容灾', hint: 'Failover' }
+]
 
 const config = reactive<BaizhiConfig>({
   auth_required: true,
@@ -1054,7 +1001,9 @@ async function loadConfig() {
   loading.value = true
   try {
     const data = await getBaizhiConfig()
-    Object.assign(config, data)
+    if (data && typeof data === 'object') {
+      Object.assign(config, data)
+    }
   } catch (err: unknown) {
     appStore.showError((err as Error).message || t('admin.baizhi.overview.saveFailed'))
   } finally {
@@ -1110,12 +1059,13 @@ async function runTest(serviceType: 'web_scrape' | 'web_search' | 'voice' | 'ima
       key_id: keyItem.id
     })
 
-    if (res.success) {
+    if (res?.success) {
       testStates[keyItem.id] = { loading: false, latency: res.latency_ms }
       appStore.showSuccess(`「${keyItem.account_name}」测试通过，延迟 ${res.latency_ms}ms`)
     } else {
-      testStates[keyItem.id] = { loading: false, error: res.message || 'Error' }
-      appStore.showError(`「${keyItem.account_name}」测试失败: ${res.message}`)
+      const errMsg = res?.message || 'Error'
+      testStates[keyItem.id] = { loading: false, error: errMsg }
+      appStore.showError(`「${keyItem.account_name}」测试失败: ${errMsg}`)
     }
   } catch (err: unknown) {
     testStates[keyItem.id] = { loading: false, error: 'Failed' }

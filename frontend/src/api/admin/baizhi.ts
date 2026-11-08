@@ -4,7 +4,6 @@
  */
 
 import { apiClient } from '../client'
-import type { ApiResponse } from '@/types'
 
 export interface BaizhiKeyEntry {
   id: string
@@ -47,17 +46,17 @@ export interface BaizhiTestResult {
 }
 
 export async function getBaizhiConfig(): Promise<BaizhiConfig> {
-  const res = await apiClient.get<ApiResponse<BaizhiConfig>>('/admin/baizhi/config')
-  return res.data.data
+  const res = await apiClient.get<BaizhiConfig>('/admin/baizhi/config')
+  return res.data
 }
 
 export async function updateBaizhiConfig(config: BaizhiConfig): Promise<void> {
-  await apiClient.put<ApiResponse<{ updated: boolean }>>('/admin/baizhi/config', config)
+  await apiClient.put<{ updated: boolean }>('/admin/baizhi/config', config)
 }
 
 export async function testBaizhiConnection(req: BaizhiTestRequest): Promise<BaizhiTestResult> {
-  const res = await apiClient.post<ApiResponse<BaizhiTestResult>>('/admin/baizhi/test', req)
-  return res.data.data
+  const res = await apiClient.post<BaizhiTestResult>('/admin/baizhi/test', req)
+  return res.data
 }
 
 export default {

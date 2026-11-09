@@ -9,14 +9,41 @@ export interface BaizhiKeyEntry {
   id: string
   account_name: string
   api_key: string
+  cookie?: string
   enabled: boolean
   weight: number
+  temporary_credits?: number
+  permanent_credits?: number
+  available_credits?: number
+  daily_claimed?: boolean
+  user_id?: number
+  user_name?: string
+  avatar?: string
+  last_sync_at?: string
   created_at?: string
+}
+
+export interface BaizhiDiscoveredKey {
+  name: string
+  key: string
+  total_used: number
+  today_used: number
+}
+
+export interface BaizhiAccountInspectResult {
+  user_id: number
+  user_name: string
+  avatar: string
+  temporary_credits: number
+  permanent_credits: number
+  available_credits: number
+  daily_claimed: boolean
+  discovered_keys: BaizhiDiscoveredKey[]
 }
 
 export interface BaizhiServiceConfig {
   enabled: boolean
-  strategy: 'round_robin' | 'failover'
+  strategy: 'round_robin' | 'failover' | 'temp_credit_first'
   base_url: string
   wss_url?: string
   keys: BaizhiKeyEntry[]
@@ -59,8 +86,20 @@ export async function testBaizhiConnection(req: BaizhiTestRequest): Promise<Baiz
   return res.data
 }
 
+export async function inspectBaizhiAccount(cookie: string): Promise<BaizhiAccountInspectResult> {
+  const res = await apiClient.post<BaizhiAccountInspectResult>('/admin/baizhi/account/inspect', { cookie })
+  return res.data
+}
+
+export async function syncBaizhiBalances(): Promise<BaizhiConfig> {
+  const res = await apiClient.post<BaizhiConfig>('/admin/baizhi/sync-balances')
+  return res.data
+}
+
 export default {
   getBaizhiConfig,
   updateBaizhiConfig,
   testBaizhiConnection,
+  inspectBaizhiAccount,
+  syncBaizhiBalances,
 }

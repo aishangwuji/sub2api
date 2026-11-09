@@ -50,6 +50,9 @@ func (h *BaizhiHandler) GetConfig(c *gin.Context) {
 		for i, k := range keys {
 			out[i] = k
 			out[i].APIKey = maskBaizhiAPIKey(k.APIKey)
+			if strings.TrimSpace(k.Cookie) != "" {
+				out[i].Cookie = maskBaizhiAPIKey(k.Cookie)
+			}
 		}
 		return out
 	}
@@ -76,12 +79,14 @@ func (h *BaizhiHandler) UpdateConfig(c *gin.Context) {
 		stored = service.DefaultBaizhiConfig()
 	}
 
-	// Helper map of existing keys by ID
+	// Helper maps of existing keys and cookies by ID
 	existingKeys := make(map[string]string)
+	existingCookies := make(map[string]string)
 	addExisting := func(keys []service.BaizhiKeyEntry) {
 		for _, k := range keys {
 			if k.ID != "" {
 				existingKeys[k.ID] = k.APIKey
+				existingCookies[k.ID] = k.Cookie
 			}
 		}
 	}
@@ -90,7 +95,7 @@ func (h *BaizhiHandler) UpdateConfig(c *gin.Context) {
 	addExisting(stored.Voice.Keys)
 	addExisting(stored.ImageGenerate.Keys)
 
-	// Unmask any key that was submitted unchanged with asterisks
+	// Unmask any key or cookie that was submitted unchanged with asterisks
 	resolveKeys := func(keys []service.BaizhiKeyEntry) []service.BaizhiKeyEntry {
 		out := make([]service.BaizhiKeyEntry, len(keys))
 		for i, k := range keys {
@@ -98,6 +103,11 @@ func (h *BaizhiHandler) UpdateConfig(c *gin.Context) {
 			if isBaizhiMasked(k.APIKey) && k.ID != "" {
 				if oldKey, ok := existingKeys[k.ID]; ok && oldKey != "" {
 					out[i].APIKey = oldKey
+				}
+			}
+			if isBaizhiMasked(k.Cookie) && k.ID != "" {
+				if oldCookie, ok := existingCookies[k.ID]; ok && oldCookie != "" {
+					out[i].Cookie = oldCookie
 				}
 			}
 		}
@@ -171,4 +181,57 @@ func (h *BaizhiHandler) TestConnection(c *gin.Context) {
 	}
 
 	response.Success(c, result)
+}
+
+type BaizhiInspectAccountRequest struct {
+	Cookie string `json:"cookie" binding:"required"`
+}
+
+// InspectAccount fetches live profile, wallet balance, and discovered API keys from baizhi.cloud.
+// POST /api/v1/admin/baizhi/account/inspect
+func (h *BaizhiHandler) InspectAccount(c *gin.Context) {
+	var req BaizhiInspectAccountRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, "Cookie or session is required: "+err.Error())
+		return
+	}
+
+	result, err := h.baizhiService.InspectAccount(c.Request.Context(), req.Cookie)
+	if err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+
+	response.Success(c, result)
+}
+
+// SyncBalances triggers a live refresh of wallet balances for all configured accounts.
+// POST /api/v1/admin/baizhi/sync-balances
+func (h *BaizhiHandler) SyncBalances(c *gin.Context) {
+	updatedCfg, err := h.baizhiService.SyncAllBalances(c.Request.Context())
+	if err != nil {
+		response.InternalError(c, "Failed to sync balances: "+err.Error())
+		return
+	}
+
+	// Create a safe copy with masked keys & cookies
+	masked := *updatedCfg
+	maskKeys := func(keys []service.BaizhiKeyEntry) []service.BaizhiKeyEntry {
+		out := make([]service.BaizhiKeyEntry, len(keys))
+		for i, k := range keys {
+			out[i] = k
+			out[i].APIKey = maskBaizhiAPIKey(k.APIKey)
+			if strings.TrimSpace(k.Cookie) != "" {
+				out[i].Cookie = maskBaizhiAPIKey(k.Cookie)
+			}
+		}
+		return out
+	}
+
+	masked.WebScrape.Keys = maskKeys(updatedCfg.WebScrape.Keys)
+	masked.WebSearch.Keys = maskKeys(updatedCfg.WebSearch.Keys)
+	masked.Voice.Keys = maskKeys(updatedCfg.Voice.Keys)
+	masked.ImageGenerate.Keys = maskKeys(updatedCfg.ImageGenerate.Keys)
+
+	response.Success(c, masked)
 }

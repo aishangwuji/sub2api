@@ -150,6 +150,8 @@ func registerBaizhiRoutes(admin *gin.RouterGroup, h *admin.BaizhiHandler) {
 		baizhi.GET("/config", h.GetConfig)
 		baizhi.PUT("/config", h.UpdateConfig)
 		baizhi.POST("/test", h.TestConnection)
+		baizhi.POST("/account/inspect", h.InspectAccount)
+		baizhi.POST("/sync-balances", h.SyncBalances)
 	}
 }
 

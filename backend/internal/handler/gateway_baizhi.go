@@ -179,7 +179,7 @@ func (h *BaizhiGatewayHandler) ForwardScrape(c *gin.Context) {
 
 	subpath := normalizeScrapeSubpath(c.Param("subpath"))
 	targetURL := strings.TrimRight(baseURL, "/") + subpath
-	h.forwardHTTP(c, targetURL, key.APIKey)
+	h.forwardHTTP(c, targetURL, key.APIKey, key.ID, 10.0)
 }
 
 // ForwardSearch forwards requests to Baizhi Web Search service.
@@ -198,7 +198,7 @@ func (h *BaizhiGatewayHandler) ForwardSearch(c *gin.Context) {
 
 	subpath := normalizeSearchSubpath(c.Param("subpath"))
 	targetURL := strings.TrimRight(baseURL, "/") + subpath
-	h.forwardHTTP(c, targetURL, key.APIKey)
+	h.forwardHTTP(c, targetURL, key.APIKey, key.ID, 2.5)
 }
 
 // ForwardVoice forwards requests to Baizhi Voice service (supports HTTP and WebSocket).
@@ -224,7 +224,7 @@ func (h *BaizhiGatewayHandler) ForwardVoice(c *gin.Context) {
 
 	subpath := normalizeVoiceSubpath(rawSubpath, baseURL)
 	targetURL := strings.TrimRight(baseURL, "/") + subpath
-	h.forwardHTTP(c, targetURL, key.APIKey)
+	h.forwardHTTP(c, targetURL, key.APIKey, key.ID, 5.0)
 }
 
 // ForwardImage forwards requests to Baizhi Image Generation service.
@@ -243,11 +243,11 @@ func (h *BaizhiGatewayHandler) ForwardImage(c *gin.Context) {
 
 	subpath := normalizeImageSubpath(c.Param("subpath"), baseURL)
 	targetURL := strings.TrimRight(baseURL, "/") + subpath
-	h.forwardHTTP(c, targetURL, key.APIKey)
+	h.forwardHTTP(c, targetURL, key.APIKey, key.ID, 10.0)
 }
 
 // forwardHTTP executes the standard HTTP reverse proxy with SSE streaming support.
-func (h *BaizhiGatewayHandler) forwardHTTP(c *gin.Context, targetURL, apiKey string) {
+func (h *BaizhiGatewayHandler) forwardHTTP(c *gin.Context, targetURL, apiKey, keyID string, estimatedCost float64) {
 	if c.Request.URL.RawQuery != "" {
 		targetURL += "?" + c.Request.URL.RawQuery
 	}
@@ -282,6 +282,10 @@ func (h *BaizhiGatewayHandler) forwardHTTP(c *gin.Context, targetURL, apiKey str
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		h.baizhiService.DeductTempCredit(keyID, estimatedCost)
+	}
 
 	// Copy response headers
 	for k, vv := range resp.Header {

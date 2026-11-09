@@ -5,16 +5,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 主色调 - Teal/Cyan 青色系
+        // 主色调 - 高对比度专业青翠色系 (确保亮色主题下白字与边框高清晰度)
         primary: {
           50: '#f0fdfa',
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
           400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
+          500: '#0f766e',
+          600: '#0d7069',
+          700: '#0a5c56',
           800: '#115e59',
           900: '#134e4a',
           950: '#042f2e'
@@ -65,6 +65,7 @@ export default {
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
       },
       boxShadow: {
+        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         glass: '0 8px 32px rgba(0, 0, 0, 0.08)',
         'glass-sm': '0 4px 16px rgba(0, 0, 0, 0.06)',
         glow: '0 0 20px rgba(20, 184, 166, 0.25)',

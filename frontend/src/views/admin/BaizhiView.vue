@@ -12,7 +12,18 @@
         <div class="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
+            :disabled="syncingBalances"
+            title="向百智云实时刷新所有配置了 Cookie 的账号积分与余额"
+            @click="syncAllBalances"
+          >
+            <Icon name="bolt" size="sm" :class="{ 'animate-spin': syncingBalances }" />
+            <span>{{ syncingBalances ? '正在同步...' : '同步全部账号积分' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
             :disabled="loading"
             @click="loadConfig"
           >
@@ -49,7 +60,7 @@
               </code>
               <button
                 type="button"
-                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
+                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer"
                 :title="t('admin.baizhi.docs.copyCode')"
                 @click="copyGatewayUrl"
               >
@@ -166,7 +177,7 @@
                 </span>
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('web_scrape')"
                 >
                   <Icon name="plus" size="xs" />
@@ -185,8 +196,35 @@
                   class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <img v-if="keyItem.avatar" :src="keyItem.avatar" class="w-4 h-4 rounded-full" />
                       <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+
+                      <span
+                        v-if="keyItem.temporary_credits !== undefined"
+                        class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                        :class="keyItem.temporary_credits > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' : 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-dark-800 dark:text-gray-400 dark:border-dark-700'"
+                        :title="`剩余临时积分: ${keyItem.temporary_credits}`"
+                      >
+                        ⚡ {{ keyItem.temporary_credits > 0 ? `${keyItem.temporary_credits} 临时` : '临时已尽' }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.permanent_credits !== undefined && keyItem.permanent_credits > 0"
+                        class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-800"
+                        :title="`永久积分: ${keyItem.permanent_credits}`"
+                      >
+                        💰 {{ keyItem.permanent_credits }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.daily_claimed"
+                        class="text-[10px] text-teal-600 dark:text-teal-400 font-medium"
+                        title="今日签到临时积分已领"
+                      >
+                        ✓ 已领
+                      </span>
+
                       <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
@@ -196,7 +234,7 @@
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px] truncate max-w-[320px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
@@ -210,7 +248,7 @@
                     />
                     <button
                       type="button"
-                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       :title="t('admin.baizhi.card.testConnection')"
                       @click="runTest('web_scrape', keyItem)"
@@ -274,7 +312,7 @@
                 </span>
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('web_search')"
                 >
                   <Icon name="plus" size="xs" />
@@ -292,8 +330,35 @@
                   class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <img v-if="keyItem.avatar" :src="keyItem.avatar" class="w-4 h-4 rounded-full" />
                       <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+
+                      <span
+                        v-if="keyItem.temporary_credits !== undefined"
+                        class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                        :class="keyItem.temporary_credits > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' : 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-dark-800 dark:text-gray-400 dark:border-dark-700'"
+                        :title="`剩余临时积分: ${keyItem.temporary_credits}`"
+                      >
+                        ⚡ {{ keyItem.temporary_credits > 0 ? `${keyItem.temporary_credits} 临时` : '临时已尽' }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.permanent_credits !== undefined && keyItem.permanent_credits > 0"
+                        class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-800"
+                        :title="`永久积分: ${keyItem.permanent_credits}`"
+                      >
+                        💰 {{ keyItem.permanent_credits }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.daily_claimed"
+                        class="text-[10px] text-teal-600 dark:text-teal-400 font-medium"
+                        title="今日签到临时积分已领"
+                      >
+                        ✓ 已领
+                      </span>
+
                       <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
@@ -303,7 +368,7 @@
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px] truncate max-w-[320px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
@@ -316,7 +381,7 @@
                     />
                     <button
                       type="button"
-                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('web_search', keyItem)"
                     >
@@ -379,7 +444,7 @@
                 </span>
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('voice')"
                 >
                   <Icon name="plus" size="xs" />
@@ -397,8 +462,35 @@
                   class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <img v-if="keyItem.avatar" :src="keyItem.avatar" class="w-4 h-4 rounded-full" />
                       <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+
+                      <span
+                        v-if="keyItem.temporary_credits !== undefined"
+                        class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                        :class="keyItem.temporary_credits > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' : 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-dark-800 dark:text-gray-400 dark:border-dark-700'"
+                        :title="`剩余临时积分: ${keyItem.temporary_credits}`"
+                      >
+                        ⚡ {{ keyItem.temporary_credits > 0 ? `${keyItem.temporary_credits} 临时` : '临时已尽' }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.permanent_credits !== undefined && keyItem.permanent_credits > 0"
+                        class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-800"
+                        :title="`永久积分: ${keyItem.permanent_credits}`"
+                      >
+                        💰 {{ keyItem.permanent_credits }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.daily_claimed"
+                        class="text-[10px] text-teal-600 dark:text-teal-400 font-medium"
+                        title="今日签到临时积分已领"
+                      >
+                        ✓ 已领
+                      </span>
+
                       <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
@@ -408,7 +500,7 @@
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px] truncate max-w-[320px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
@@ -421,7 +513,7 @@
                     />
                     <button
                       type="button"
-                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('voice', keyItem)"
                     >
@@ -484,7 +576,7 @@
                 </span>
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer"
+                  class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer"
                   @click="openAddKeyDialog('image_generate')"
                 >
                   <Icon name="plus" size="xs" />
@@ -502,8 +594,35 @@
                   class="flex items-center justify-between rounded-xl border border-gray-200/80 bg-gray-50/70 p-2.5 text-xs dark:border-dark-700 dark:bg-dark-900/50"
                 >
                   <div class="min-w-0 flex-1 space-y-0.5">
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <img v-if="keyItem.avatar" :src="keyItem.avatar" class="w-4 h-4 rounded-full" />
                       <span class="font-semibold text-gray-900 dark:text-white">{{ keyItem.account_name || 'Account' }}</span>
+
+                      <span
+                        v-if="keyItem.temporary_credits !== undefined"
+                        class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                        :class="keyItem.temporary_credits > 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' : 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-dark-800 dark:text-gray-400 dark:border-dark-700'"
+                        :title="`剩余临时积分: ${keyItem.temporary_credits}`"
+                      >
+                        ⚡ {{ keyItem.temporary_credits > 0 ? `${keyItem.temporary_credits} 临时` : '临时已尽' }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.permanent_credits !== undefined && keyItem.permanent_credits > 0"
+                        class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-800"
+                        :title="`永久积分: ${keyItem.permanent_credits}`"
+                      >
+                        💰 {{ keyItem.permanent_credits }}
+                      </span>
+
+                      <span
+                        v-if="keyItem.daily_claimed"
+                        class="text-[10px] text-teal-600 dark:text-teal-400 font-medium"
+                        title="今日签到临时积分已领"
+                      >
+                        ✓ 已领
+                      </span>
+
                       <span v-if="testStates[keyItem.id]?.latency" class="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                         <Icon name="checkCircle" size="xs" />
                         {{ testStates[keyItem.id].latency }}ms
@@ -513,7 +632,7 @@
                         {{ testStates[keyItem.id].error }}
                       </span>
                     </div>
-                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px]">
+                    <div class="font-mono text-gray-600 dark:text-gray-400 select-all text-[11.5px] truncate max-w-[320px]">
                       {{ keyItem.api_key }}
                     </div>
                   </div>
@@ -526,7 +645,7 @@
                     />
                     <button
                       type="button"
-                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                      class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
                       :disabled="testStates[keyItem.id]?.loading"
                       @click="runTest('image_generate', keyItem)"
                     >
@@ -852,6 +971,81 @@
       @close="showAddKeyDialog = false"
     >
       <div class="space-y-4">
+        <!-- Cookie / Session input with inspect button -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">
+            百智云账号 Cookie / Session
+          </label>
+          <div class="mt-1.5 flex gap-2">
+            <input
+              v-model.trim="newKeyForm.cookie"
+              type="text"
+              class="input input-sm flex-1 font-mono text-xs"
+              placeholder="粘贴完整 Cookie 或 baizhi_session=..."
+            />
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:bg-gray-50 dark:hover:bg-dark-700 shadow-xs transition-all cursor-pointer disabled:opacity-50"
+              :disabled="inspectingCookie || !newKeyForm.cookie"
+              @click="inspectCookie"
+            >
+              <Icon name="bolt" size="xs" :class="{ 'animate-spin': inspectingCookie }" />
+              <span>{{ inspectingCookie ? '识别中...' : '检测账号' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inspect Result Panel if detected -->
+        <div v-if="inspectResult" class="p-3 rounded-xl bg-gray-50 dark:bg-dark-900/60 border border-gray-200/80 dark:border-dark-700 space-y-2 text-xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <img v-if="inspectResult.avatar" :src="inspectResult.avatar" class="w-6 h-6 rounded-full" />
+              <span class="font-bold text-gray-900 dark:text-white">{{ inspectResult.user_name }}</span>
+              <span class="text-gray-400 text-[11px]">ID: {{ inspectResult.user_id }}</span>
+            </div>
+            <span v-if="inspectResult.daily_claimed" class="text-emerald-700 dark:text-emerald-400 font-semibold text-[11px]">
+              ✓ 已签到
+            </span>
+            <span v-else class="text-amber-700 dark:text-amber-400 font-semibold text-[11px]">
+              未签到
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-center pt-1">
+            <div class="p-2 rounded-lg bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700">
+              <div class="text-[10.5px] text-gray-500 dark:text-gray-400">今日临时积分</div>
+              <div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">⚡ {{ inspectResult.temporary_credits }}</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700">
+              <div class="text-[10.5px] text-gray-500 dark:text-gray-400">永久积分</div>
+              <div class="text-sm font-bold text-gray-900 dark:text-gray-100">💰 {{ inspectResult.permanent_credits }}</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-700">
+              <div class="text-[10.5px] text-gray-500 dark:text-gray-400">总可用积分</div>
+              <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ inspectResult.available_credits }}</div>
+            </div>
+          </div>
+
+          <!-- Discovered keys list if any -->
+          <div v-if="inspectResult.discovered_keys && inspectResult.discovered_keys.length > 0" class="pt-2 border-t border-gray-200/60 dark:border-dark-700">
+            <div class="text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              关联密钥
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="k in inspectResult.discovered_keys"
+                :key="k.key"
+                type="button"
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono bg-white dark:bg-dark-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-dark-600 hover:border-gray-900 dark:hover:border-teal-500 cursor-pointer"
+                @click="newKeyForm.api_key = k.key; if (!newKeyForm.account_name) newKeyForm.account_name = k.name || inspectResult.user_name"
+              >
+                <Icon name="key" size="xs" />
+                <span>{{ k.name ? `${k.name}: ` : '' }}{{ k.key.substring(0, 12) }}...</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div>
           <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300">
             {{ t('admin.baizhi.dialog.accountName') }}
@@ -911,8 +1105,11 @@ import {
   getBaizhiConfig,
   updateBaizhiConfig,
   testBaizhiConnection,
+  inspectBaizhiAccount,
+  syncBaizhiBalances,
   type BaizhiConfig,
-  type BaizhiKeyEntry
+  type BaizhiKeyEntry,
+  type BaizhiAccountInspectResult
 } from '@/api/admin/baizhi'
 
 const { t } = useI18n()
@@ -925,6 +1122,7 @@ const saving = ref(false)
 const copiedUrl = ref(false)
 
 const strategyOptions: PillOption[] = [
+  { value: 'temp_credit_first', label: '临时积分优先', hint: '每日100额度' },
   { value: 'round_robin', label: '轮询均衡', hint: 'Round Robin' },
   { value: 'failover', label: '主备容灾', hint: 'Failover' }
 ]
@@ -992,10 +1190,65 @@ const totalKeysCount = computed(() => {
 // Dialog state
 const showAddKeyDialog = ref(false)
 const targetServiceForAdd = ref<'web_scrape' | 'web_search' | 'voice' | 'image_generate'>('web_scrape')
+const inspectingCookie = ref(false)
+const inspectResult = ref<BaizhiAccountInspectResult | null>(null)
+const syncingBalances = ref(false)
+
 const newKeyForm = reactive({
   account_name: '',
-  api_key: ''
+  api_key: '',
+  cookie: '',
+  temporary_credits: 0,
+  permanent_credits: 0,
+  available_credits: 0,
+  daily_claimed: false,
+  user_id: 0,
+  user_name: '',
+  avatar: ''
 })
+
+async function inspectCookie() {
+  if (!newKeyForm.cookie) {
+    appStore.showError('请先粘贴百智云 Cookie 或 baizhi_session')
+    return
+  }
+  inspectingCookie.value = true
+  inspectResult.value = null
+  try {
+    const res = await inspectBaizhiAccount(newKeyForm.cookie)
+    inspectResult.value = res
+    if (res.user_name && (!newKeyForm.account_name || newKeyForm.account_name.startsWith('账号'))) {
+      newKeyForm.account_name = res.user_name
+    }
+    newKeyForm.temporary_credits = res.temporary_credits
+    newKeyForm.permanent_credits = res.permanent_credits
+    newKeyForm.available_credits = res.available_credits
+    newKeyForm.daily_claimed = res.daily_claimed
+    newKeyForm.user_id = res.user_id
+    newKeyForm.user_name = res.user_name
+    newKeyForm.avatar = res.avatar
+    appStore.showSuccess(`成功识别账号「${res.user_name}」，剩余临时积分 ${res.temporary_credits}`)
+  } catch (err: unknown) {
+    appStore.showError((err as Error).message || '识别账号失败')
+  } finally {
+    inspectingCookie.value = false
+  }
+}
+
+async function syncAllBalances() {
+  syncingBalances.value = true
+  try {
+    const updated = await syncBaizhiBalances()
+    if (updated && typeof updated === 'object') {
+      Object.assign(config, updated)
+      appStore.showSuccess('各账号积分与余额已同步刷新！')
+    }
+  } catch (err: unknown) {
+    appStore.showError((err as Error).message || '同步账号积分失败')
+  } finally {
+    syncingBalances.value = false
+  }
+}
 
 async function loadConfig() {
   loading.value = true
@@ -1027,6 +1280,15 @@ function openAddKeyDialog(serviceType: 'web_scrape' | 'web_search' | 'voice' | '
   targetServiceForAdd.value = serviceType
   newKeyForm.account_name = ''
   newKeyForm.api_key = ''
+  newKeyForm.cookie = ''
+  newKeyForm.temporary_credits = 0
+  newKeyForm.permanent_credits = 0
+  newKeyForm.available_credits = 0
+  newKeyForm.daily_claimed = false
+  newKeyForm.user_id = 0
+  newKeyForm.user_name = ''
+  newKeyForm.avatar = ''
+  inspectResult.value = null
   showAddKeyDialog.value = true
 }
 
@@ -1037,6 +1299,15 @@ function confirmAddKey() {
     id: `key_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     account_name: newKeyForm.account_name,
     api_key: newKeyForm.api_key,
+    cookie: newKeyForm.cookie || undefined,
+    temporary_credits: newKeyForm.temporary_credits,
+    permanent_credits: newKeyForm.permanent_credits,
+    available_credits: newKeyForm.available_credits,
+    daily_claimed: newKeyForm.daily_claimed,
+    user_id: newKeyForm.user_id || undefined,
+    user_name: newKeyForm.user_name || undefined,
+    avatar: newKeyForm.avatar || undefined,
+    last_sync_at: newKeyForm.temporary_credits !== undefined ? new Date().toISOString() : undefined,
     enabled: true,
     weight: 1
   }

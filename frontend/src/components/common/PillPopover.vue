@@ -5,13 +5,13 @@
       ref="triggerRef"
       type="button"
       :disabled="disabled"
-      class="pill-trigger group inline-flex items-center justify-between h-[28px] rounded-full border text-xs font-medium transition-all duration-150 select-none outline-none cursor-pointer"
+      class="pill-trigger group inline-flex items-center justify-between h-[28px] rounded-full border text-xs font-semibold transition-all duration-150 select-none outline-none cursor-pointer"
       :class="[
         disabled
           ? 'cursor-not-allowed opacity-50 bg-gray-100 text-gray-400 border-gray-200 dark:bg-dark-800 dark:border-dark-700'
           : isOpen
-            ? 'bg-gray-100/90 text-gray-900 border-gray-300 dark:bg-dark-700 dark:text-white dark:border-dark-500 ring-2 ring-gray-900/5 dark:ring-white/10'
-            : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-50 hover:border-gray-300 dark:bg-dark-800 dark:text-gray-200 dark:border-dark-600 dark:hover:bg-dark-700 dark:hover:border-dark-500 shadow-2xs',
+            ? 'bg-gray-100/90 text-gray-900 border-gray-400 dark:bg-dark-700 dark:text-white dark:border-dark-500 ring-2 ring-gray-900/10 dark:ring-white/10'
+            : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400 dark:bg-dark-800 dark:text-gray-200 dark:border-dark-600 dark:hover:bg-dark-700 dark:hover:border-dark-500 shadow-xs',
         triggerClass
       ]"
       :style="{ padding: '0 26px 0 12px' }"
@@ -25,7 +25,7 @@
       </span>
       <!-- 9px wide, 6px high triangle indicator -->
       <svg
-        class="w-[9px] h-[6px] text-gray-400 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200 transition-transform duration-200 shrink-0"
+        class="w-[9px] h-[6px] text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-transform duration-200 shrink-0"
         :class="{ 'rotate-180': isOpen }"
         viewBox="0 0 9 6"
         fill="currentColor"
